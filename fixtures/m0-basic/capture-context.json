@@ -1,0 +1,10 @@
+{
+  "vantage_point": {
+    "kind": "agent_host",
+    "label": "voice-agent-01"
+  },
+  "interface": "eth0",
+  "supplied_by": {
+    "method": "fixture_manifest"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "call": {
+    "sip_call_id": "voicewire-m0@example.test"
+  },
+  "clock": {
+    "id": "fixture-clock",
+    "type": "wall",
+    "alignment_to_capture_clock": {
+      "type": "exact",
+      "justification": "Synthetic M0 fixture: the agent trace and the PCAP were generated against the same wall clock on purpose, so their timestamps are exactly comparable. This is a fixture property, not something VoiceWire infers or assumes in general."
+    }
+  },
+  "events": [
+    {
+      "id": "evt-1",
+      "type": "vad.speech_end",
+      "timestamp": "2026-01-01T00:00:00.450000Z"
+    },
+    {
+      "id": "evt-2",
+      "type": "first_audio",
+      "timestamp": "2026-01-01T00:00:00.520000Z"
+    },
+    {
+      "id": "evt-3",
+      "type": "agent.turn_end",
+      "timestamp": "2026-01-01T00:00:01.050000Z"
+    }
+  ]
+}
