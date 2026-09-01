@@ -1,0 +1,436 @@
+{
+  "report_schema_version": "0.1.0",
+  "voicewire_version": "0.1.0",
+  "scope_note": "This report establishes evidence truth (hashed artifacts, normalized SIP/RTP/trace evidence, explicit clock alignment, explicit correlation). It does not contain a latency or fault diagnosis.",
+  "runtime": {
+    "python_version": "3.11.15",
+    "tshark_version": "4.2.2",
+    "voicewire_version": "0.1.0"
+  },
+  "inputs": [
+    {
+      "id": "artifact:12594c719bc77874e32876ca",
+      "name": "call.pcap",
+      "path": "fixtures/m0-basic/call.pcap",
+      "format": "pcap",
+      "size_bytes": 3028,
+      "sha256": "cc65ba899fa50eea91b77d4c379fcf083f29a6e35666f8fba7e51cd5c507b5f3"
+    },
+    {
+      "id": "artifact:8451b17f01007ecc31e6fc19",
+      "name": "agent-trace.json",
+      "path": "fixtures/m0-basic/agent-trace.json",
+      "format": "json_trace",
+      "size_bytes": 814,
+      "sha256": "e16c069a3612ee313b69d49e4a921d7ca4c7b5f3609c90207b85ce53e644479d"
+    }
+  ],
+  "capture_context": {
+    "vantage_point_kind": "agent_host",
+    "vantage_point_label": "voice-agent-01",
+    "interface": "eth0",
+    "supplied_by": {
+      "method": "fixture_manifest"
+    }
+  },
+  "clock_domains": [
+    {
+      "id": "fixture-clock",
+      "type": "wall",
+      "description": null
+    },
+    {
+      "id": "pcap.capture_clock",
+      "type": "capture",
+      "description": "Capture-host clock recorded by tshark as each frame's timestamp."
+    }
+  ],
+  "clock_alignments": [
+    {
+      "from_clock_id": "fixture-clock",
+      "to_clock_id": "pcap.capture_clock",
+      "type": "exact",
+      "offset_seconds": null,
+      "justification": "Synthetic M0 fixture: the agent trace and the PCAP were generated against the same wall clock on purpose, so their timestamps are exactly comparable. This is a fixture property, not something VoiceWire infers or assumes in general.",
+      "declared_by": "trace_fixture:clock.alignment_to_capture_clock"
+    }
+  ],
+  "evidence_events": [
+    {
+      "id": "evidence:59dc874a3361c6beab8f218c",
+      "kind": "trace.vad.speech_end",
+      "source": {
+        "artifact_id": "artifact:8451b17f01007ecc31e6fc19",
+        "adapter": "trace_fixture",
+        "adapter_version": "0.1.0",
+        "locator": "event:evt-1"
+      },
+      "time": {
+        "clock_id": "fixture-clock",
+        "timestamp": "2026-01-01T00:00:00.450000Z",
+        "precision": "unknown",
+        "basis": "source_reported"
+      },
+      "attributes": {},
+      "raw_ref": "{\"id\": \"evt-1\", \"timestamp\": \"2026-01-01T00:00:00.450000Z\", \"type\": \"vad.speech_end\"}"
+    },
+    {
+      "id": "evidence:13f65882220b5e00ae4fa763",
+      "kind": "trace.first_audio",
+      "source": {
+        "artifact_id": "artifact:8451b17f01007ecc31e6fc19",
+        "adapter": "trace_fixture",
+        "adapter_version": "0.1.0",
+        "locator": "event:evt-2"
+      },
+      "time": {
+        "clock_id": "fixture-clock",
+        "timestamp": "2026-01-01T00:00:00.520000Z",
+        "precision": "unknown",
+        "basis": "source_reported"
+      },
+      "attributes": {},
+      "raw_ref": "{\"id\": \"evt-2\", \"timestamp\": \"2026-01-01T00:00:00.520000Z\", \"type\": \"first_audio\"}"
+    },
+    {
+      "id": "evidence:7a62b6ac63ea2db4a8ac0640",
+      "kind": "trace.agent.turn_end",
+      "source": {
+        "artifact_id": "artifact:8451b17f01007ecc31e6fc19",
+        "adapter": "trace_fixture",
+        "adapter_version": "0.1.0",
+        "locator": "event:evt-3"
+      },
+      "time": {
+        "clock_id": "fixture-clock",
+        "timestamp": "2026-01-01T00:00:01.050000Z",
+        "precision": "unknown",
+        "basis": "source_reported"
+      },
+      "attributes": {},
+      "raw_ref": "{\"id\": \"evt-3\", \"timestamp\": \"2026-01-01T00:00:01.050000Z\", \"type\": \"agent.turn_end\"}"
+    },
+    {
+      "id": "evidence:2abfaa8aa0ca0d606c31bb87",
+      "kind": "sip.message",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:1"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:00Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "call_id": "voicewire-m0@example.test",
+        "method": "INVITE",
+        "cseq_number": "1",
+        "cseq_method": "INVITE",
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "5061",
+        "dst_port": "5060",
+        "sdp_media_type": "audio",
+        "sdp_media_port": 30000,
+        "sdp_media_proto": "RTP/AVP",
+        "sdp_media_payload_types": [
+          0
+        ],
+        "sdp_connection_address": "127.0.0.1"
+      },
+      "raw_ref": "{\"sdp.connection_info\": \"IN IP4 127.0.0.1\", \"sdp.connection_info.address\": \"127.0.0.1\", \"sdp.connection_info.address_type\": \"IP4\", \"sdp.connection_info.network_type\": \"IN\", \"sdp.media\": \"audio 30000 RTP/AVP 0\", \"sdp.media.format\": \"ITU-T G.711 PCMU\", \"sdp.media.media\": \"audio\", \"sdp.media.port\": \"30000\", \"sdp.media.port_string\": \"30000\", \"sdp.media.proto\": \"RTP/AVP\", \"sdp.owner\": \"caller 1 1 IN IP4 127.0.0.1\", \"sdp.owner.address\": \"127.0.0.1\", \"sdp.owner.address_type\": \"IP4\", \"sdp.owner.network_type\": \"IN\", \"sdp.owner.sessionid\": \"1\", \"sdp.owner.username\": \"caller\", \"sdp.owner.version\": \"1\", \"sdp.session_name\": \"voicewire-m0\", \"sdp.time\": \"0 0\", \"sdp.time.start\": \"0\", \"sdp.time.stop\": \"0\", \"sdp.version\": \"0\", \"sip.CSeq\": \"1 INVITE\", \"sip.CSeq.method\": \"INVITE\", \"sip.CSeq.seq\": \"1\", \"sip.Call-ID\": \"voicewire-m0@example.test\", \"sip.Contact\": \"<sip:caller@127.0.0.1:5061>\", \"sip.Content-Length\": \"104\", \"sip.Content-Type\": \"application/sdp\", \"sip.From\": \"<sip:caller@example.test>;tag=caller-tag\", \"sip.Method\": \"INVITE\", \"sip.Request-Line\": \"INVITE sip:agent@127.0.0.1:5060 SIP/2.0\", \"sip.To\": \"<sip:agent@example.test>\", \"sip.Via\": \"SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\", \"sip.Via.branch\": \"z9hG4bK-5061\", \"sip.Via.sent-by.address\": \"127.0.0.1\", \"sip.Via.sent-by.port\": \"5061\", \"sip.Via.transport\": \"UDP\", \"sip.call_id_generated\": \"voicewire-m0@example.test\", \"sip.contact.host\": \"127.0.0.1\", \"sip.contact.port\": \"5061\", \"sip.contact.uri\": \"sip:caller@127.0.0.1:5061\", \"sip.contact.user\": \"caller\", \"sip.from.addr\": \"sip:caller@example.test\", \"sip.from.host\": \"example.test\", \"sip.from.tag\": \"caller-tag\", \"sip.from.user\": \"caller\", \"sip.msg_body\": \"76:3d:30:0d:0a:6f:3d:63:61:6c:6c:65:72:20:31:20:31:20:49:4e:20:49:50:34:20:31:32:37:2e:30:2e:30:2e:31:0d:0a:73:3d:76:6f:69:63:65:77:69:72:65:2d:6d:30:0d:0a:63:3d:49:4e:20:49:50:34:20:31:32:37:2e:30:2e:30:2e:31:0d:0a:74:3d:30:20:30:0d:0a:6d:3d:61:75:64:69:6f:20:33:30:30:30:30:20:52:54:50:2f:41:56:50:20:30:0d:0a\", \"sip.msg_hdr\": \"Via: SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\\r\\nCall-ID: voicewire-m0@example.test\\r\\nFrom: <sip:caller@example.test>;tag=caller-tag\\r\\nTo: <sip:agent@example.test>\\r\\nCSeq: 1 INVITE\\r\\nContact: <sip:caller@127.0.0.1:5061>\\r\\nContent-Type: application/sdp\\r\\nContent-Length: 104\\r\\n\\r\\n\", \"sip.r-uri\": \"sip:agent@127.0.0.1:5060\", \"sip.r-uri.host\": \"127.0.0.1\", \"sip.r-uri.port\": \"5060\", \"sip.r-uri.user\": \"agent\", \"sip.resend\": \"0\", \"sip.tag\": \"caller-tag\", \"sip.to.addr\": \"sip:agent@example.test\", \"sip.to.host\": \"example.test\", \"sip.to.user\": \"agent\"}"
+    },
+    {
+      "id": "evidence:fbbf52f8d3e67ad33ebc20f9",
+      "kind": "sip.message",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:2"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:00.100000Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "call_id": "voicewire-m0@example.test",
+        "status_code": "200",
+        "cseq_number": "1",
+        "cseq_method": "INVITE",
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "5060",
+        "dst_port": "5061",
+        "sdp_media_type": "audio",
+        "sdp_media_port": 30002,
+        "sdp_media_proto": "RTP/AVP",
+        "sdp_media_payload_types": [
+          0
+        ],
+        "sdp_connection_address": "127.0.0.1"
+      },
+      "raw_ref": "{\"sdp.connection_info\": \"IN IP4 127.0.0.1\", \"sdp.connection_info.address\": \"127.0.0.1\", \"sdp.connection_info.address_type\": \"IP4\", \"sdp.connection_info.network_type\": \"IN\", \"sdp.media\": \"audio 30002 RTP/AVP 0\", \"sdp.media.format\": \"ITU-T G.711 PCMU\", \"sdp.media.media\": \"audio\", \"sdp.media.port\": \"30002\", \"sdp.media.port_string\": \"30002\", \"sdp.media.proto\": \"RTP/AVP\", \"sdp.owner\": \"agent 1 1 IN IP4 127.0.0.1\", \"sdp.owner.address\": \"127.0.0.1\", \"sdp.owner.address_type\": \"IP4\", \"sdp.owner.network_type\": \"IN\", \"sdp.owner.sessionid\": \"1\", \"sdp.owner.username\": \"agent\", \"sdp.owner.version\": \"1\", \"sdp.session_name\": \"voicewire-m0\", \"sdp.time\": \"0 0\", \"sdp.time.start\": \"0\", \"sdp.time.stop\": \"0\", \"sdp.version\": \"0\", \"sip.CSeq\": \"1 INVITE\", \"sip.CSeq.method\": \"INVITE\", \"sip.CSeq.seq\": \"1\", \"sip.Call-ID\": \"voicewire-m0@example.test\", \"sip.Contact\": \"<sip:agent@127.0.0.1:5060>\", \"sip.Content-Length\": \"103\", \"sip.Content-Type\": \"application/sdp\", \"sip.From\": \"<sip:caller@example.test>;tag=caller-tag\", \"sip.Status-Code\": \"200\", \"sip.Status-Line\": \"SIP/2.0 200 OK\", \"sip.To\": \"<sip:agent@example.test>;tag=agent-tag\", \"sip.Via\": \"SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\", \"sip.Via.branch\": \"z9hG4bK-5061\", \"sip.Via.sent-by.address\": \"127.0.0.1\", \"sip.Via.sent-by.port\": \"5061\", \"sip.Via.transport\": \"UDP\", \"sip.call_id_generated\": \"voicewire-m0@example.test\", \"sip.contact.host\": \"127.0.0.1\", \"sip.contact.port\": \"5060\", \"sip.contact.uri\": \"sip:agent@127.0.0.1:5060\", \"sip.contact.user\": \"agent\", \"sip.from.addr\": \"sip:caller@example.test\", \"sip.from.host\": \"example.test\", \"sip.from.tag\": \"caller-tag\", \"sip.from.user\": \"caller\", \"sip.msg_body\": \"76:3d:30:0d:0a:6f:3d:61:67:65:6e:74:20:31:20:31:20:49:4e:20:49:50:34:20:31:32:37:2e:30:2e:30:2e:31:0d:0a:73:3d:76:6f:69:63:65:77:69:72:65:2d:6d:30:0d:0a:63:3d:49:4e:20:49:50:34:20:31:32:37:2e:30:2e:30:2e:31:0d:0a:74:3d:30:20:30:0d:0a:6d:3d:61:75:64:69:6f:20:33:30:30:30:32:20:52:54:50:2f:41:56:50:20:30:0d:0a\", \"sip.msg_hdr\": \"Via: SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\\r\\nCall-ID: voicewire-m0@example.test\\r\\nFrom: <sip:caller@example.test>;tag=caller-tag\\r\\nTo: <sip:agent@example.test>;tag=agent-tag\\r\\nCSeq: 1 INVITE\\r\\nContact: <sip:agent@127.0.0.1:5060>\\r\\nContent-Type: application/sdp\\r\\nContent-Length: 103\\r\\n\\r\\n\", \"sip.resend\": \"0\", \"sip.response-request\": \"1\", \"sip.response-time\": \"100\", \"sip.tag\": \"agent-tag\", \"sip.to.addr\": \"sip:agent@example.test\", \"sip.to.host\": \"example.test\", \"sip.to.tag\": \"agent-tag\", \"sip.to.user\": \"agent\"}"
+    },
+    {
+      "id": "evidence:3dd73fe664f8130ff3c4f73a",
+      "kind": "sip.message",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:3"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:00.150000Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "call_id": "voicewire-m0@example.test",
+        "method": "ACK",
+        "cseq_number": "1",
+        "cseq_method": "ACK",
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "5061",
+        "dst_port": "5060"
+      },
+      "raw_ref": "{\"sip.CSeq\": \"1 ACK\", \"sip.CSeq.method\": \"ACK\", \"sip.CSeq.seq\": \"1\", \"sip.Call-ID\": \"voicewire-m0@example.test\", \"sip.Content-Length\": \"0\", \"sip.From\": \"<sip:caller@example.test>;tag=caller-tag\", \"sip.Method\": \"ACK\", \"sip.Request-Line\": \"ACK sip:agent@127.0.0.1:5060 SIP/2.0\", \"sip.To\": \"<sip:agent@example.test>;tag=agent-tag\", \"sip.Via\": \"SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\", \"sip.Via.branch\": \"z9hG4bK-5061\", \"sip.Via.sent-by.address\": \"127.0.0.1\", \"sip.Via.sent-by.port\": \"5061\", \"sip.Via.transport\": \"UDP\", \"sip.call_id_generated\": \"voicewire-m0@example.test\", \"sip.from.addr\": \"sip:caller@example.test\", \"sip.from.host\": \"example.test\", \"sip.from.tag\": \"caller-tag\", \"sip.from.user\": \"caller\", \"sip.msg_hdr\": \"Via: SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\\r\\nCall-ID: voicewire-m0@example.test\\r\\nFrom: <sip:caller@example.test>;tag=caller-tag\\r\\nTo: <sip:agent@example.test>;tag=agent-tag\\r\\nCSeq: 1 ACK\\r\\nContent-Length: 0\\r\\n\\r\\n\", \"sip.r-uri\": \"sip:agent@127.0.0.1:5060\", \"sip.r-uri.host\": \"127.0.0.1\", \"sip.r-uri.port\": \"5060\", \"sip.r-uri.user\": \"agent\", \"sip.resend\": \"0\", \"sip.response-request\": \"1\", \"sip.response-time\": \"150\", \"sip.tag\": \"agent-tag\", \"sip.to.addr\": \"sip:agent@example.test\", \"sip.to.host\": \"example.test\", \"sip.to.tag\": \"agent-tag\", \"sip.to.user\": \"agent\"}"
+    },
+    {
+      "id": "evidence:7205487d6f5db94f4fb528b9",
+      "kind": "rtp.packet",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:4"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:00.500000Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "ssrc": "0xcafebabe",
+        "sequence_number": 1000,
+        "payload_type": 0,
+        "rtp_timestamp": 8000,
+        "marker": true,
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "30000",
+        "dst_port": "30002"
+      },
+      "raw_ref": "{\"rtp.cc\": \"0\", \"rtp.ext\": \"0\", \"rtp.extseq\": \"66536\", \"rtp.marker\": \"1\", \"rtp.p_type\": \"0\", \"rtp.padding\": \"0\", \"rtp.payload\": \"ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff\", \"rtp.seq\": \"1000\", \"rtp.setup\": \"\", \"rtp.setup-frame\": \"1\", \"rtp.setup-method\": \"SDP\", \"rtp.ssrc\": \"0xcafebabe\", \"rtp.timestamp\": \"8000\", \"rtp.version\": \"2\", \"sip.call_id_generated\": \"voicewire-m0@example.test\"}"
+    },
+    {
+      "id": "evidence:2f1acb4d24584d509d63da91",
+      "kind": "rtp.packet",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:5"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:00.520000Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "ssrc": "0xcafebabe",
+        "sequence_number": 1001,
+        "payload_type": 0,
+        "rtp_timestamp": 8160,
+        "marker": false,
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "30000",
+        "dst_port": "30002"
+      },
+      "raw_ref": "{\"rtp.cc\": \"0\", \"rtp.ext\": \"0\", \"rtp.extseq\": \"66537\", \"rtp.marker\": \"0\", \"rtp.p_type\": \"0\", \"rtp.padding\": \"0\", \"rtp.payload\": \"ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff\", \"rtp.seq\": \"1001\", \"rtp.setup\": \"\", \"rtp.setup-frame\": \"1\", \"rtp.setup-method\": \"SDP\", \"rtp.ssrc\": \"0xcafebabe\", \"rtp.timestamp\": \"8160\", \"rtp.version\": \"2\", \"sip.call_id_generated\": \"voicewire-m0@example.test\"}"
+    },
+    {
+      "id": "evidence:5bf182779b230802ade87966",
+      "kind": "rtp.packet",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:6"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:00.540000Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "ssrc": "0xcafebabe",
+        "sequence_number": 1002,
+        "payload_type": 0,
+        "rtp_timestamp": 8320,
+        "marker": false,
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "30000",
+        "dst_port": "30002"
+      },
+      "raw_ref": "{\"rtp.cc\": \"0\", \"rtp.ext\": \"0\", \"rtp.extseq\": \"66538\", \"rtp.marker\": \"0\", \"rtp.p_type\": \"0\", \"rtp.padding\": \"0\", \"rtp.payload\": \"ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff\", \"rtp.seq\": \"1002\", \"rtp.setup\": \"\", \"rtp.setup-frame\": \"1\", \"rtp.setup-method\": \"SDP\", \"rtp.ssrc\": \"0xcafebabe\", \"rtp.timestamp\": \"8320\", \"rtp.version\": \"2\", \"sip.call_id_generated\": \"voicewire-m0@example.test\"}"
+    },
+    {
+      "id": "evidence:d282c4ecf06b9a7ffc8ec62c",
+      "kind": "rtp.packet",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:7"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:00.560000Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "ssrc": "0xcafebabe",
+        "sequence_number": 1003,
+        "payload_type": 0,
+        "rtp_timestamp": 8480,
+        "marker": false,
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "30000",
+        "dst_port": "30002"
+      },
+      "raw_ref": "{\"rtp.cc\": \"0\", \"rtp.ext\": \"0\", \"rtp.extseq\": \"66539\", \"rtp.marker\": \"0\", \"rtp.p_type\": \"0\", \"rtp.padding\": \"0\", \"rtp.payload\": \"ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff\", \"rtp.seq\": \"1003\", \"rtp.setup\": \"\", \"rtp.setup-frame\": \"1\", \"rtp.setup-method\": \"SDP\", \"rtp.ssrc\": \"0xcafebabe\", \"rtp.timestamp\": \"8480\", \"rtp.version\": \"2\", \"sip.call_id_generated\": \"voicewire-m0@example.test\"}"
+    },
+    {
+      "id": "evidence:13300f941d1f03672e6607e6",
+      "kind": "rtp.packet",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:8"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:00.580000Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "ssrc": "0xcafebabe",
+        "sequence_number": 1004,
+        "payload_type": 0,
+        "rtp_timestamp": 8640,
+        "marker": false,
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "30000",
+        "dst_port": "30002"
+      },
+      "raw_ref": "{\"rtp.cc\": \"0\", \"rtp.ext\": \"0\", \"rtp.extseq\": \"66540\", \"rtp.marker\": \"0\", \"rtp.p_type\": \"0\", \"rtp.padding\": \"0\", \"rtp.payload\": \"ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff\", \"rtp.seq\": \"1004\", \"rtp.setup\": \"\", \"rtp.setup-frame\": \"1\", \"rtp.setup-method\": \"SDP\", \"rtp.ssrc\": \"0xcafebabe\", \"rtp.timestamp\": \"8640\", \"rtp.version\": \"2\", \"sip.call_id_generated\": \"voicewire-m0@example.test\"}"
+    },
+    {
+      "id": "evidence:0e2d24108ae427fbd22d4ef6",
+      "kind": "sip.message",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:9"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:01.100000Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "call_id": "voicewire-m0@example.test",
+        "method": "BYE",
+        "cseq_number": "2",
+        "cseq_method": "BYE",
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "5061",
+        "dst_port": "5060"
+      },
+      "raw_ref": "{\"sip.CSeq\": \"2 BYE\", \"sip.CSeq.method\": \"BYE\", \"sip.CSeq.seq\": \"2\", \"sip.Call-ID\": \"voicewire-m0@example.test\", \"sip.Content-Length\": \"0\", \"sip.From\": \"<sip:caller@example.test>;tag=caller-tag\", \"sip.Method\": \"BYE\", \"sip.Request-Line\": \"BYE sip:agent@127.0.0.1:5060 SIP/2.0\", \"sip.To\": \"<sip:agent@example.test>;tag=agent-tag\", \"sip.Via\": \"SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\", \"sip.Via.branch\": \"z9hG4bK-5061\", \"sip.Via.sent-by.address\": \"127.0.0.1\", \"sip.Via.sent-by.port\": \"5061\", \"sip.Via.transport\": \"UDP\", \"sip.call_id_generated\": \"voicewire-m0@example.test\", \"sip.from.addr\": \"sip:caller@example.test\", \"sip.from.host\": \"example.test\", \"sip.from.tag\": \"caller-tag\", \"sip.from.user\": \"caller\", \"sip.msg_hdr\": \"Via: SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\\r\\nCall-ID: voicewire-m0@example.test\\r\\nFrom: <sip:caller@example.test>;tag=caller-tag\\r\\nTo: <sip:agent@example.test>;tag=agent-tag\\r\\nCSeq: 2 BYE\\r\\nContent-Length: 0\\r\\n\\r\\n\", \"sip.r-uri\": \"sip:agent@127.0.0.1:5060\", \"sip.r-uri.host\": \"127.0.0.1\", \"sip.r-uri.port\": \"5060\", \"sip.r-uri.user\": \"agent\", \"sip.resend\": \"0\", \"sip.tag\": \"agent-tag\", \"sip.to.addr\": \"sip:agent@example.test\", \"sip.to.host\": \"example.test\", \"sip.to.tag\": \"agent-tag\", \"sip.to.user\": \"agent\"}"
+    },
+    {
+      "id": "evidence:d2a1897f866b94c340b56c11",
+      "kind": "sip.message",
+      "source": {
+        "artifact_id": "artifact:12594c719bc77874e32876ca",
+        "adapter": "tshark",
+        "adapter_version": "4.2.2",
+        "locator": "frame:10"
+      },
+      "time": {
+        "clock_id": "pcap.capture_clock",
+        "timestamp": "2026-01-01T00:00:01.150000Z",
+        "precision": "microsecond",
+        "basis": "capture_timestamp"
+      },
+      "attributes": {
+        "call_id": "voicewire-m0@example.test",
+        "status_code": "200",
+        "cseq_number": "2",
+        "cseq_method": "BYE",
+        "src_ip": "127.0.0.1",
+        "dst_ip": "127.0.0.1",
+        "src_port": "5060",
+        "dst_port": "5061"
+      },
+      "raw_ref": "{\"sip.CSeq\": \"2 BYE\", \"sip.CSeq.method\": \"BYE\", \"sip.CSeq.seq\": \"2\", \"sip.Call-ID\": \"voicewire-m0@example.test\", \"sip.Content-Length\": \"0\", \"sip.From\": \"<sip:caller@example.test>;tag=caller-tag\", \"sip.Status-Code\": \"200\", \"sip.Status-Line\": \"SIP/2.0 200 OK\", \"sip.To\": \"<sip:agent@example.test>;tag=agent-tag\", \"sip.Via\": \"SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\", \"sip.Via.branch\": \"z9hG4bK-5061\", \"sip.Via.sent-by.address\": \"127.0.0.1\", \"sip.Via.sent-by.port\": \"5061\", \"sip.Via.transport\": \"UDP\", \"sip.call_id_generated\": \"voicewire-m0@example.test\", \"sip.from.addr\": \"sip:caller@example.test\", \"sip.from.host\": \"example.test\", \"sip.from.tag\": \"caller-tag\", \"sip.from.user\": \"caller\", \"sip.msg_hdr\": \"Via: SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-5061\\r\\nCall-ID: voicewire-m0@example.test\\r\\nFrom: <sip:caller@example.test>;tag=caller-tag\\r\\nTo: <sip:agent@example.test>;tag=agent-tag\\r\\nCSeq: 2 BYE\\r\\nContent-Length: 0\\r\\n\\r\\n\", \"sip.release-time\": \"50\", \"sip.resend\": \"0\", \"sip.response-request\": \"9\", \"sip.response-time\": \"50\", \"sip.tag\": \"agent-tag\", \"sip.to.addr\": \"sip:agent@example.test\", \"sip.to.host\": \"example.test\", \"sip.to.tag\": \"agent-tag\", \"sip.to.user\": \"agent\"}"
+    }
+  ],
+  "derived_observations": [],
+  "correlations": [
+    {
+      "id": "correlation:bc3b1d2aa1ae2a1858db48de",
+      "kind": "sdp_media_to_rtp_stream",
+      "method": "exact_sdp_endpoint_match",
+      "left_ref": "sip:call_id:voicewire-m0@example.test",
+      "right_ref": "rtp:stream:0xcafebabe",
+      "supporting_evidence_ids": [
+        "evidence:13300f941d1f03672e6607e6",
+        "evidence:2abfaa8aa0ca0d606c31bb87",
+        "evidence:2f1acb4d24584d509d63da91",
+        "evidence:5bf182779b230802ade87966",
+        "evidence:7205487d6f5db94f4fb528b9",
+        "evidence:d282c4ecf06b9a7ffc8ec62c",
+        "evidence:fbbf52f8d3e67ad33ebc20f9"
+      ]
+    },
+    {
+      "id": "correlation:1d9f98c6a420bb876073c0ef",
+      "kind": "trace_call_to_sip_dialog",
+      "method": "exact_sip_call_id_match",
+      "left_ref": "trace:call:voicewire-m0@example.test",
+      "right_ref": "sip:call_id:voicewire-m0@example.test",
+      "supporting_evidence_ids": [
+        "evidence:0e2d24108ae427fbd22d4ef6",
+        "evidence:2abfaa8aa0ca0d606c31bb87",
+        "evidence:3dd73fe664f8130ff3c4f73a",
+        "evidence:d2a1897f866b94c340b56c11",
+        "evidence:fbbf52f8d3e67ad33ebc20f9"
+      ]
+    }
+  ]
+}
